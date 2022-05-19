@@ -1,6 +1,6 @@
 {
   "name": "003-bases-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple multiplicity table",
   "main": "app.js",
   "scripts": {
@@ -10,7 +10,8 @@
   "author": "Juan Temich",
   "license": "MIT",
   "dependencies": {
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"

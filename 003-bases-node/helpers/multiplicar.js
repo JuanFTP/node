@@ -1,20 +1,31 @@
 // Paquetes que ya tiene node pre-instalado
 const fs = require("node:fs");
+const colors = require("colors");
 
-const crearArchivo = async (base = 5) => {
+const crearArchivo = async (base = 1, limit = 10, show) => {
   try {
     let def = "./files/";
-    let out = `=========================================\n============== TABLA ${base} ==============\n=========================================\n`;
+    let header = `=========================================\n============== TABLA ${base} ==============\n=========================================\n`;
+    let out = "";
+
     let file = `tabla-${base}.txt`;
 
-    for (let i = 1; i <= 10; i++) {
-      out += `${base} x ${i + 1} = ${base * i}\n`;
+    if (show) {
+      console.log(colors.rainbow(header));
+    }
+
+    for (let i = 1; i <= limit; i++) {
+      out += `${base} x ${i} = ${base * i}\n`;
+      if (show) {
+        console.log(`${base} ${"x".blue} ${i} ${"=".red} ${base * i}`);
+      }
     }
 
     // Usa un try y catch para controlar los errores
-    fs.writeFileSync(def + file, out);
+    fs.writeFileSync(def + file, header + out);
     out += `\nTabla de base ${base} creada`;
-    return { file, out };
+
+    return { file };
   } catch (error) {
     throw error;
   }

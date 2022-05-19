@@ -1,14 +1,14 @@
+const colors = require("colors");
 const { crearArchivo } = require("./helpers/multiplicar");
+const argv = require("./config/yargs");
 
 console.clear();
 
-const [, , arg3 = "--base=1", arg4 = "--limit=10"] = process.argv;
-const [, base] = arg3.split("=");
-const [, limit] = arg4.split("=");
+const { base, limit, show } = argv;
 
-crearArchivo(base)
-  .then(({ file, out }) => {
-    console.log(out, `\n\nArchivo ${file} creado exitosamente`);
+crearArchivo(base, limit, show)
+  .then(({ file }) => {
+    console.log(`\nArchivo ${colors.rainbow(file)} creado exitosamente`);
   })
   .catch((error) => {
     console.log(error);
