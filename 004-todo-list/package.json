@@ -11,7 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "colors": "^1.4.0",
-    "inquirer": "^8.2.4"
+    "inquirer": "^8.2.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"
