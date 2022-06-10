@@ -4,13 +4,13 @@ class Tarea {
   id = "";
   description = "";
   completed = false;
-  createdDate = null;
+  lastModification = null;
 
   constructor(description) {
     this.id = uuidv4();
     this.description = description;
     this.completed = false;
-    this.createdDate = null;
+    this.lastModification = new Date().toISOString();
   }
 }
 
