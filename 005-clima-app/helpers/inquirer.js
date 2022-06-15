@@ -60,11 +60,11 @@ const readInput = async (message) => {
   return description;
 };
 
-const mostrarTareasParaBorrar = async (tareas = []) => {
-  const choices = tareas.map((tarea, idx) => {
+const listarLugares = async (lugares = []) => {
+  const choices = lugares.map((lugar, idx) => {
     return {
-      value: tarea.id,
-      name: `${idx + 1}. `.green + tarea.description,
+      value: lugar.id,
+      name: `${idx + 1}. `.green + lugar.nombre,
     };
   });
 
@@ -73,16 +73,16 @@ const mostrarTareasParaBorrar = async (tareas = []) => {
     name: "0. ".green + "Cancelar",
   });
 
-  const listaTareas = [
+  const listaLugares = [
     {
       type: "list",
       name: "id",
-      message: "Selecciona la tarea a borrar",
+      message: "Seleccione lugar:",
       choices,
     },
   ];
 
-  const { id } = await inquirer.prompt(listaTareas);
+  const { id } = await inquirer.prompt(listaLugares);
   return id;
 };
 
@@ -94,7 +94,7 @@ const confirmar = async (message) => {
       message,
     },
   ];
-
+  
   const { response } = await inquirer.prompt(question);
   return response;
 };
@@ -125,7 +125,7 @@ module.exports = {
   inquirerMenu,
   pause,
   readInput,
-  mostrarTareasParaBorrar,
+  listarLugares,
   confirmar,
   mostrarListadoCheckList,
 };

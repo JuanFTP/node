@@ -1,4 +1,10 @@
-const { readInput, inquirerMenu, pause } = require("./helpers/inquirer");
+require("dotenv").config();
+const {
+  readInput,
+  inquirerMenu,
+  pause,
+  listarLugares,
+} = require("./helpers/inquirer");
 const Busquedas = require("./models/Busquedas");
 
 (async () => {
@@ -13,10 +19,31 @@ const Busquedas = require("./models/Busquedas");
       case 1:
         const lugar = await readInput("Lugar a buscar: ".yellow);
         const resultados = await busquedas.ciudad(lugar);
-        console.log(resultados);
+        const id = await listarLugares(resultados);
+
+        if (id !== "0") {
+          const seleccionado = resultados.find((l) => l.id === id);
+          busquedas.agregarAlHistorial(seleccionado.nombre);
+
+          const weatherData = await busquedas.climaPorGeolocacion(
+            seleccionado.longitud,
+            seleccionado.latitud
+          );
+
+          console.log("\nInformación de la ciudad".green);
+          console.log("          Ciudad: ", seleccionado.nombre);
+          console.log("         Latitud: ", seleccionado.latitud);
+          console.log("        Longitud: ", seleccionado.longitud);
+          console.log("     Temperatura: ", weatherData.temp, "°C");
+          console.log("          Mínima: ", weatherData.min, "°C");
+          console.log("          Máxima: ", weatherData.max, "°C");
+          console.log("Estado del clima: ", weatherData.status);
+        }
         break;
       case 2:
-        console.log("Historial de búsquedas");
+        busquedas.historial.forEach((lugar, i) => {
+          console.log(`${i + 1}. `.green + lugar);
+        });
       default:
         break;
     }
