@@ -34,9 +34,9 @@ const UsuarioSchema = Schema({
 
 // Métodos personalizados para el modelo, debe usar una función normal por que usa el this
 UsuarioSchema.methods.toJSON = function () {
-  const { __v, password, ...data } = this.toObject();
+  const { __v, password, _id, ...data } = this.toObject();
 
-  return data;
+  return { uid: _id, ...data };
 };
 
 module.exports = model("Usuario", UsuarioSchema);

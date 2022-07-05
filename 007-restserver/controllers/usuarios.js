@@ -65,6 +65,7 @@ const createUsuarios = async (req = request, res = response) => {
 // DELETE
 const deleteUsuarios = async (req = request, res = response) => {
   const { id } = req.params;
+  const { usuarioAuth } = req;
 
   // Borrado lógico
   const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
