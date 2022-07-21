@@ -18,7 +18,6 @@ const isAdminRol = (req = request, res = response, next) => {
 };
 
 const hasRole = (...roles) => {
-  console.log(roles);
   return (req = request, res = response, next) => {
     if (!req.usuarioAuth) {
       return res.status(500).json({
