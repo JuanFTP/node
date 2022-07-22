@@ -1,7 +1,7 @@
 // Middleware personalizado
 const { request, response } = require("express");
 const jwt = require("jsonwebtoken");
-const Usuario = require("./../models/usuario");
+const { Usuario } = require("./../models");
 
 const validateJwt = async (req = request, res = response, next) => {
   const token = req.header("x-api-key");

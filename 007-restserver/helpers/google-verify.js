@@ -17,8 +17,6 @@ const googleVerify = async (idToken = '') => {
   };
 };
 
-googleVerify().catch(console.error);
-
 module.exports = {
   googleVerify,
 };
