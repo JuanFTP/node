@@ -1,6 +1,40 @@
 const { request, response } = require("express");
 const { Categoria } = require("./../models");
 
+// Obtener Categorías - Paginado - Total - Populate
+const getCategorias = async (req = request, res = response) => {
+  const { limit = 5, offset = 0 } = req.query;
+
+  const response = await Promise.all([
+    Categoria.countDocuments({ estado: true }),
+    Categoria.find({ estado: true })
+      .skip(Number(offset))
+      .limit(Number(limit))
+      .populate("usuario"),
+  ]);
+
+  const [total, categorias] = response;
+
+  const stats = {
+    mostrando: categorias.length,
+    total,
+  };
+
+  res.json({
+    stats,
+    categorias,
+  });
+};
+
+// Obtener categoría - Populate
+const getCategoria = async (req = request, res = response) => {
+  const { id } = req.params;
+
+  const categoria = await Categoria.findById(id).populate("usuario");
+
+  res.json(categoria);
+};
+
 const addCategoria = async (req = request, res = response) => {
   const nombre = req.body.nombre.toUpperCase();
   const usuario = req.usuarioAuth;
@@ -24,6 +58,39 @@ const addCategoria = async (req = request, res = response) => {
   res.status(201).json(categoria);
 };
 
+// Actualizar categoría - Nombre
+const setCategoria = async (req = request, res = response) => {
+  const { id } = req.params;
+  const nombre = req.body.nombre.toUpperCase();
+
+  const exist = await Categoria.findOne({ nombre });
+
+  if (exist && exist.id.toString() !== id) {
+    return res.status(400).json({
+      message: `El nombre: ${nombre} ya pertenece a otra categoría, elige otro`,
+    });
+  }
+
+  const categoria = await Categoria.findByIdAndUpdate(id, { nombre }).populate(
+    "usuario"
+  );
+
+  res.json(categoria);
+};
+
+// Borrar categoría - Cambiar estado a false
+const deleteCategoria = async (req = request, res = response) => {
+  const { id } = req.params;
+
+  const categoria = await Categoria.findByIdAndUpdate(id, { estado: false });
+
+  res.json(categoria);
+};
+
 module.exports = {
+  getCategorias,
+  getCategoria,
   addCategoria,
+  setCategoria,
+  deleteCategoria,
 };

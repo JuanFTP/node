@@ -1,21 +1,29 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { addCategoria } = require("../controllers/categorias");
-const { validateFields, validateJwt } = require("./../middlewares");
+const {
+  addCategoria,
+  getCategorias,
+  getCategoria,
+  setCategoria,
+  deleteCategoria,
+} = require("../controllers/categorias");
+const { existCategoria } = require("../helpers/db-validators");
+const { validateFields, validateJwt, isAdminRol } = require("./../middlewares");
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "GET obtener todas las categorías" });
-});
+router.get("/", getCategorias);
 
-router.get("/:id", (req, res) => {
-  res.json({
-    message: "GET obtener una categoría",
-  });
-});
+router.get(
+  "/:id",
+  [
+    check("id", "No es un ID válido").isMongoId(),
+    check("id").custom(existCategoria),
+  ],
+  validateFields,
+  getCategoria
+);
 
-// [RESTRICTED] - ANY_ROLE - token valid
 router.post(
   "/",
   [
@@ -26,14 +34,29 @@ router.post(
   addCategoria
 );
 
-// [RESTRICTED] - ANY_ROLE - token valid
-router.put("/:id", (req, res) => {
-  res.json({ message: "PUT actualizar una categoría" });
-});
+router.put(
+  "/:id",
+  [
+    validateJwt,
+    check("id", "No es nu ID válido").isMongoId(),
+    check("id").custom(existCategoria),
+    check("nombre", "El nombre es requerido").notEmpty(),
+    isAdminRol,
+    validateFields,
+  ],
+  setCategoria
+);
 
-// [RESTRICTED] - ADMIN_ROLE
-router.delete("/:id", (req, res) => {
-  res.json({ message: "DELETE eliminar categoría" });
-});
+router.delete(
+  "/:id",
+  [
+    validateJwt,
+    isAdminRol,
+    check("id", "No es un ID válido").isMongoId(),
+    check("id").custom(existCategoria),
+    validateFields,
+  ],
+  deleteCategoria
+);
 
 module.exports = router;
