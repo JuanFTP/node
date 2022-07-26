@@ -19,7 +19,7 @@ const CategoriaSchema = Schema({
 });
 
 CategoriaSchema.methods.toJSON = function () {
-  const { __v, ...data } = this.toObject();
+  const { __v, estado, ...data } = this.toObject();
 
   return { ...data };
 };

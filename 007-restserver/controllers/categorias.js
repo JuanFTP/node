@@ -10,7 +10,7 @@ const getCategorias = async (req = request, res = response) => {
     Categoria.find({ estado: true })
       .skip(Number(offset))
       .limit(Number(limit))
-      .populate("usuario"),
+      .populate("usuario", "nombre"),
   ]);
 
   const [total, categorias] = response;
@@ -30,7 +30,7 @@ const getCategorias = async (req = request, res = response) => {
 const getCategoria = async (req = request, res = response) => {
   const { id } = req.params;
 
-  const categoria = await Categoria.findById(id).populate("usuario");
+  const categoria = await Categoria.findById(id).populate("usuario", "nombre");
 
   res.json(categoria);
 };
@@ -61,19 +61,22 @@ const addCategoria = async (req = request, res = response) => {
 // Actualizar categoría - Nombre
 const setCategoria = async (req = request, res = response) => {
   const { id } = req.params;
-  const nombre = req.body.nombre.toUpperCase();
+  const { estado, usuarioAuth, ...data } = req.body;
 
-  const exist = await Categoria.findOne({ nombre });
+  data.nombre = data.nombre.toUpperCase();
+  data.usuario = req.usuarioAuth._id;
 
-  if (exist && exist.id.toString() !== id) {
+  const exist = await Categoria.findOne({ nombre: data.nombre });
+
+  if (exist && exist._id.toString() !== id) {
     return res.status(400).json({
-      message: `El nombre: ${nombre} ya pertenece a otra categoría, elige otro`,
+      message: `El nombre: ${data.nombre} ya pertenece a otra categoría, elige otro`,
     });
   }
 
-  const categoria = await Categoria.findByIdAndUpdate(id, { nombre }).populate(
-    "usuario"
-  );
+  const categoria = await Categoria.findByIdAndUpdate(id, data, {
+    new: true,
+  }).populate("usuario", "nombre");
 
   res.json(categoria);
 };
@@ -82,7 +85,11 @@ const setCategoria = async (req = request, res = response) => {
 const deleteCategoria = async (req = request, res = response) => {
   const { id } = req.params;
 
-  const categoria = await Categoria.findByIdAndUpdate(id, { estado: false });
+  const categoria = await Categoria.findByIdAndUpdate(
+    id,
+    { estado: false },
+    { new: true }
+  ).populate("usuario", "nombre");
 
   res.json(categoria);
 };
