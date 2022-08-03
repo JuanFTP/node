@@ -1,22 +1,20 @@
-const path = require("path");
 const { request, response } = require("express");
+const { uploadFile } = require("../helpers");
 
 const cargarArchivo = async (req = request, res = response) => {
   if (!req.files || Object.keys(req.files).length === 0 || !req.files.archivo) {
     return res.status(400).json({ message: "No hay archivos que subir" });
   }
 
-  const { archivo } = req.files;
+  try {
+    const file = await uploadFile(req.files, ["txt", "md"], "plaintext");
 
-  const uploadPath = path.join(__dirname, "../uploads/", archivo.name);
-
-  archivo.mv(uploadPath, (err) => {
-    if (err) {
-      return res.status(500).json({ message: err });
-    }
-
-    res.json({ message: "File uploaded to " + uploadPath });
-  });
+    res.json({
+      file,
+    });
+  } catch (message) {
+    return res.status(400).json({ message });
+  }
 };
 
 module.exports = {
