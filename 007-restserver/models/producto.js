@@ -6,6 +6,7 @@ const ProductoSchema = Schema({
     required: [true, "El nombre es requerido"],
     unique: true,
   },
+  image: { type: String },
   estado: {
     type: Boolean,
     default: true,
