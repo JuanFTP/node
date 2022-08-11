@@ -2,8 +2,8 @@ const { Router } = require("express");
 const { check } = require("express-validator");
 const {
   cargarArchivo,
-  actualizarImagen,
   mostrarImagen,
+  actualizarImagenCloudinary,
 } = require("../controllers/uploads");
 const { collectionsAllowed } = require("../helpers");
 const {
@@ -33,7 +33,7 @@ router.put(
     check("id", "El id no es válido").isMongoId(),
     validateFields,
   ],
-  actualizarImagen
+  actualizarImagenCloudinary
 );
 
 router.get(

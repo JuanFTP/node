@@ -1,5 +1,8 @@
 const path = require("path");
 const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 const { request, response } = require("express");
 const { uploadFile } = require("../helpers");
@@ -82,6 +85,63 @@ const actualizarImagen = async (req = request, res = response) => {
   res.json(model);
 };
 
+const actualizarImagenCloudinary = async (req = request, res = response) => {
+  const { collection, id } = req.params;
+
+  let model;
+
+  switch (collection) {
+    case "users":
+      model = await Usuario.findById(id);
+
+      if (!model) {
+        return res
+          .status(400)
+          .json({ message: `No existe un usuario con el id: ${id}` });
+      }
+      break;
+    case "products":
+      model = await Producto.findById(id);
+
+      if (!model) {
+        return res
+          .status(400)
+          .json({ message: `No existe un producto con el id: ${id}` });
+      }
+      break;
+    default:
+      return res.status(500).json({ message: "Collección no contemplada" });
+  }
+
+  // Limpiar imagenes previas del usuario
+  try {
+    if (model.image) {
+      const parts = model.image.split("/");
+      const nombre = parts[parts.length - 1];
+      const [public_id] = nombre.split(".");
+
+      cloudinary.uploader.destroy(public_id);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Error interno, purgado..." });
+  }
+
+  const { tempFilePath } = req.files.archivo;
+
+  const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
+
+  if (!secure_url) {
+    return res
+      .status(500)
+      .json({ message: "El archivo no se ha podido guardar" });
+  }
+
+  model.image = secure_url;
+  await model.save();
+
+  res.json(model);
+};
+
 const mostrarImagen = async (req = request, res = response) => {
   const { collection, id } = req.params;
 
@@ -112,7 +172,7 @@ const mostrarImagen = async (req = request, res = response) => {
 
   // Limpiar imagenes previas del usuario
   let pathImage = "";
-  
+
   try {
     if (model.image) {
       // Borrar la imagen del servidor
@@ -127,7 +187,6 @@ const mostrarImagen = async (req = request, res = response) => {
   }
 
   pathImage = path.join(__dirname, "../assets", collection + ".png");
-  console.log(pathImage);
 
   res.sendFile(pathImage);
 };
@@ -135,5 +194,6 @@ const mostrarImagen = async (req = request, res = response) => {
 module.exports = {
   cargarArchivo,
   actualizarImagen,
+  actualizarImagenCloudinary,
   mostrarImagen,
 };
