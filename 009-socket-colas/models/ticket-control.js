@@ -67,7 +67,7 @@ class TicketControl {
 
     this.recent.unshift(ticket);
 
-    if (this.recent.length >= 4) {
+    if (this.recent.length > 4) {
       this.recent.splice(-1, 1);
     }
 
