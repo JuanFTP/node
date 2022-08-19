@@ -71,8 +71,6 @@ class TicketControl {
       this.recent.splice(-1, 1);
     }
 
-    console.log(this.recent);
-
     this.saveDb();
 
     return ticket;

@@ -11,6 +11,9 @@ const lblDesktop3 = document.querySelector("#lbl-desktop-3");
 const lblDesktop4 = document.querySelector("#lbl-desktop-4");
 
 socket.on("recent", (payload) => {
+  const audio = new Audio("./../audio/new-ticket.mp3");
+  audio.play();
+
   const [ticket1, ticket2, ticket3, ticket4] = payload;
 
   lblTicket1.innerText = getLabel("Ticket ", ticket1?.id);
@@ -24,6 +27,4 @@ socket.on("recent", (payload) => {
   lblDesktop4.innerText = getLabel("Desktop ", ticket4?.desktop);
 });
 
-const getLabel = (type, number) => {
-  return `${type} ${number}`;
-};
+const getLabel = (type, number) => (number ? `${type} ${number}` : "");

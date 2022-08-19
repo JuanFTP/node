@@ -5,13 +5,14 @@ const ticketControl = new TicketControl();
 const socketController = (socket) => {
   socket.emit("last-ticket", ticketControl.last);
   socket.emit("recent", ticketControl.recent);
+  socket.emit("tickets", ticketControl.tickets.length);
 
   socket.on("create-ticket", (payload, callback) => {
     const next = ticketControl.next();
 
-    callback(next);
+    socket.broadcast.emit("tickets", ticketControl.tickets.length);
 
-    // TODO: Notificar que hay un nuevo ticket pendiente de asignar
+    callback(next);
   });
 
   socket.on("take-ticket", (payload, callback) => {
@@ -24,9 +25,11 @@ const socketController = (socket) => {
 
     const { desktop } = payload;
     const ticket = ticketControl.takeTicket(desktop);
-    const inList = ticketControl.tickets.length;
 
     socket.broadcast.emit("recent", ticketControl.recent);
+
+    socket.emit("tickets", ticketControl.tickets.length);
+    socket.broadcast.emit("tickets", ticketControl.tickets.length);
 
     if (!ticket) {
       return callback({
@@ -37,7 +40,6 @@ const socketController = (socket) => {
       return callback({
         isCorrect: true,
         ticket,
-        inList,
       });
     }
   });

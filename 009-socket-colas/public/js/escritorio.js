@@ -24,6 +24,11 @@ socket.on("connect", () => {
   btnNextTicket.disabled = false;
 });
 
+socket.on("tickets", (inList) => {
+  containerAlert.style.display = inList > 0 ? "none" : "";
+  lblFollowing.innerText = inList;
+});
+
 socket.on("disconnect", () => {
   btnNextTicket.disabled = true;
 });
@@ -34,17 +39,14 @@ socket.on("last-ticket", (last_number) => {
 
 btnNextTicket.addEventListener("click", () => {
   socket.emit("take-ticket", { desktop }, (payload) => {
-    const { isCorrect, message, ticket, inList } = payload;
+    const { isCorrect, message, ticket } = payload;
 
     if (!isCorrect) {
       lblMainInFocus.innerText = message;
       lblInFocus.innerText = "";
-      containerAlert.style.display = "";
     } else {
       lblMainInFocus.innerText = "Atendiendo al ";
       lblInFocus.innerText = `Ticket ${ticket.id}`;
     }
-
-    lblFollowing.innerText = inList ? inList : 0;
   });
 });
