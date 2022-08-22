@@ -45,6 +45,36 @@
       <div class="col-6">
         <h2>Access</h2>
         <hr />
+
+        <div class="row">
+          <form class="d-grid" action="#" method="POST" id="log-in-form">
+            <div class="mb-2">
+              <label for="correo" class="form-label">Correo</label>
+              <input
+                type="text"
+                name="correo"
+                id="correo"
+                placeholder="Correo"
+                required
+                class="form-control"
+              />
+            </div>
+
+            <div class="mb-2">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Password"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2">Log in</button>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -59,35 +89,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <script>
-      function handleCredentialResponse(response) {
-        const body = { id_token: response.credential };
-        fetch("http://localhost:8081/api/auth/google", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        })
-          .then((r) => r.json())
-          .then((resp) => {
-            console.log(resp);
-            localStorage.setItem("email", resp.usuario.correo);
-          })
-          .catch(console.warn);
-      }
-
-      const button = document.getElementById("google_signout");
-
-      button.onclick = async () => {
-        google.accounts.id.disableAutoSelect();
-
-        google.accounts.id.revoke(localStorage.getItem("email"), (done) => {
-          localStorage.clear();
-          location.reload();
-        });
-      };
-    </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="./js/main.js"></script>
   </body>
 </html>
