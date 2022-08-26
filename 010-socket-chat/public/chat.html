@@ -14,37 +14,40 @@
     <div class="container">
       <div class="row mt-5">
         <div class="col-sm-4">
-          <h3>Send message</h3>
-          <hr />
-          <div class="form">
-            <input
-              type="text"
-              name="txtUid"
-              id="txtUid"
-              class="form-control mb-2"
-              placeholder="uid"
-              autocomplete="off"
-            />
+          <div class="row">
+            <h3>Send message</h3>
+            <hr />
+            <div class="form">
+              <input
+                type="text"
+                name="txtUid"
+                id="txtUid"
+                class="form-control mb-2"
+                placeholder="uid"
+                autocomplete="off"
+              />
 
-            <textarea
-              name="txtMessage"
-              id="txtMessage"
-              cols=""
-              rows="5"
-              class="form-control mb-2"
-              placeholder="Message"
-            ></textarea>
+              <input
+                type="text"
+                name="txtMessage"
+                id="txtMessage"
+                placeholder="Message"
+                class="form-control mb-2"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <h3>Users</h3>
+            <hr />
+            <ul id="ulUsers"></ul>
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-8">
           <h3>Messages</h3>
           <hr />
           <ul id="ulMessages"></ul>
-        </div>
-        <div class="col-sm-2">
-          <h3>Users</h3>
-          <hr />
-          <ul id="ulUsers"></ul>
         </div>
       </div>
       <br />

@@ -45,14 +45,12 @@ const conectarSocket = async () => {
     console.log("Socket desconectado");
   });
 
-  socket.on("recibir-mensajes", () => {
-    console.log("Mensaje recibido");
-  });
+  socket.on("recibir-mensajes", mostrarMensajes);
 
   socket.on("usuarios-activos", mostrarUsuarios);
 
-  socket.on("mensaje-privado", () => {
-    console.log("Mensaje privado");
+  socket.on("mensaje-privado", (payload) => {
+    console.log("Mensaje privado", payload);
   });
 };
 
@@ -63,8 +61,8 @@ const mostrarUsuarios = (usuarios = []) => {
     htmlUsuarios += `
     <li id="${uid}">
       <p>
-        <h5 class="text-success">${nombre}</5>
-        <span class="fs-6 text-muted">${uid}</span>
+        <h6 class="text-success">${nombre}</h6>
+        <span class="text-muted">${uid}</span>
       </p>
     </li>
     `;
@@ -72,6 +70,41 @@ const mostrarUsuarios = (usuarios = []) => {
 
   listUsers.innerHTML = htmlUsuarios;
 };
+
+const mostrarMensajes = (mensajes = []) => {
+  console.log("mensajes", mensajes);
+  let htmlMensajes = "";
+  mensajes.forEach(({ nombre, mensaje }) => {
+    htmlMensajes += `
+    <li>
+      <p>
+        <span class="text-primary">${nombre}</span>
+        <span>${mensaje}</span>
+      </p>
+    </li>
+    `;
+  });
+
+  listMessages.innerHTML = htmlMensajes;
+};
+
+txtMessage.addEventListener("keyup", ({ keyCode }) => {
+  let mensaje = txtMessage.value;
+  let uid = txtUid.value;
+
+  if (keyCode !== 13) {
+    return;
+  }
+  if (mensaje.length === 0) {
+    return;
+  }
+
+  mensaje = mensaje.trim();
+
+  socket.emit("enviar-mensaje", { mensaje, uid });
+
+  txtMessage.value = "";
+});
 
 const main = async () => {
   await validarJWT();
